@@ -1,10 +1,12 @@
 # easymulti-datasource-spring-boot-starter
 
-多数据源动态切换似乎已经成了微服务的标配，做过那么多项目发现每个项目都要配一个动态数据源，都要写一个切面去实现动态切换，因此，我想将这些繁琐的配置封装为starter，拿来即用。
+项目地址：[https://github.com/wujiuye/easymulti-datasource-spring-boot-starter](https://github.com/wujiuye/easymulti-datasource-spring-boot-starter)
 
-去年我为项目封装过一个支持多数据库类型加sharding-jdbc的动态数据源，如mysql+redshift，但这毕竟是少数，大多数公司都只用mysql，所以就不考虑多数据库类型了，而分库可能更多的是用mycat，因此，我实现的只是一个单数据库类型（mysql）的动态数据源。
+多数据源动态切换似乎已经成了微服务的标配，做过那么多项目发现每个项目都要配一个动态数据源，都要写一个切面去实现动态切换，因此，我想将这些繁琐的配置封装为`starter`，拿来即用。
 
-easymulti支持主从库模式，如果多于两个数据源，可切换为普通模式使用，普通模式支持最多十个数据源。使用非常简单，只需要简单的在yml中配置数据源，就可以使用动态多数据源，然后在项目中使用注解切换数据源。并且整合了mybatis-plus，不再需要繁琐的配置。
+去年我为项目封装过一个支持多数据库类型加`sharding-jdbc`的动态数据源，如`mysql+redshift`，但这毕竟是少数，大多数公司都只用`mysql`，所以就不考虑多数据库类型了，而分库可能更多的是用`mycat`，因此，我实现的只是一个单数据库类型（`mysql`）的动态数据源。
+
+`easymulti`支持主从库模式，如果多于两个数据源，可切换为普通模式使用，普通模式支持最多十个数据源。使用非常简单，只需要简单的在`yml`中配置数据源，就可以使用动态多数据源，然后在项目中使用注解切换数据源。并且整合了`mybatis-plus`，不再需要繁琐的配置。
 
 ### 提供两种动态多数据源
 
@@ -15,39 +17,42 @@ easymulti支持主从库模式，如果多于两个数据源，可切换为普�
 
 ### 自动整合mybatis-plus
 
-该框架整合了mybatis-plus，mybatis-plus的配置依赖按照mybatis-plus官方介绍的去配置，
-但需要注意的是，全局配置的主键生成策略，我在代码中强制不使用，主键生成使用数据库的自增主键。
+该框架整合了`mybatis-plus`，`mybatis-plus`的配置依然按照`mybatis-plus`官方介绍的去配置。
+需要注意的是，全局配置的主键生成策略，我在代码中强制不生效了，主键生成使用数据库的自增主键。
 
 ### 连接池
 
-数据库连接池使用的是HikariCP。所有数据源共享同一份连接池的配置，注意，是共用同一份
+数据库连接池使用的是`HikariCP`。所有数据源共享同一份连接池的配置，注意，是共用同一份
 配置，而不是共用一个连接池。后续的版本将支持除默认共用的数据源配置外，可针对某个数据源
-单独配置连接池。后续版本也会支持选择其它非HikariCP的连接池。
+单独配置连接池。后续版本也会支持选择其它非`HikariCP`的连接池。
 
 ### 在项目中添加依赖
 
-maven
+maven中使用：
 ```xml
 <!-- https://mvnrepository.com/artifact/com.github.wujiuye/easymulti-datasource-spring-boot-starter -->
 <dependency>
     <groupId>com.github.wujiuye</groupId>
     <artifactId>easymulti-datasource-spring-boot-starter</artifactId>
-    <version>${版本号}</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
-gradle
+gradle中使用：
 ```groovy
 // https://mvnrepository.com/artifact/com.github.wujiuye/miniexcel
-compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-starter', version: '${版本号}'
+compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-starter', version: '1.0.5'
 ```
 
-### 需要排除spring boot的或者mybatis starter的自动配置
+### 需要排除spring boot的数据源自动配置
 
-需要排除其它的start自动配置：org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+需要排除其它的`start`自动配置：
+`org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration`
+
 ```java
 // 只扫描被@Mapper注解的接口，避免获取service包下的一些service接口
 @MapperScan(basePackages = "com.xxxx", annotationClass = Mapper.class)
+// 排除spring boot的数据源自动配置
 @SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class})
 public class Main{
 }
@@ -63,7 +68,7 @@ mybatis-plus:
 
 ```
 
-### 1、使用主从数据源的配置
+### 使用主从数据源的配置
 
 ```yaml
 ### 数据源配置
@@ -101,7 +106,7 @@ public class XxxController{
 }
 ```
 
-or
+或者
 
 ```java
 public class XxxServiceImpl{
@@ -114,7 +119,7 @@ public class XxxServiceImpl{
 }
 ```
 
-### 2、普通的多数据源动态数据源
+### 非主从的多数据源动态数据源
 
 ```yaml
 ### 数据源配置
@@ -127,9 +132,9 @@ easymuti:
       connectionTimeout: 60
       maxLifetime: 60
     # 配置默认使用的数据源，不配置则默认使用master
-    defalutDataSource: master
+    defalutDataSource: first
     first:
-      jdbcUrl: 
+      jdbcUrl: jdbc:
       username: 
       password: 
     second:
@@ -155,7 +160,7 @@ public class XxxController{
 }
 ```
 
-or
+或者
 
 ```java
 public class XxxServiceImpl{
@@ -173,7 +178,8 @@ public class XxxServiceImpl{
 }
 ```
 
-1～10个库
+`1～10`个库可选，满足你的需求
+
 ```java
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.First)
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Second)
@@ -182,6 +188,9 @@ public class XxxServiceImpl{
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Fifth)
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Sixth)
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Seventh)
+@EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Eighth)
+@EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Ninth)
+@EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Tenth)
 ```
 
 ### 版本更新说明
@@ -190,12 +199,11 @@ public class XxxServiceImpl{
 
 日期：2020/03/25\
 版本号：1.0.0\
-更新说明：除主从库外，支持使用1～10这种普通的动态数据源
+更新说明：除主从库外，支持使用`1～10`这种普通的动态数据源
 
 #### 版本1.0.5
 
 日期：2020/03/25\
 版本号：1.0.5\
 更新说明：解决`yaml`配置数据源时没有自动提示的问题
-
 
