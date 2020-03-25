@@ -1,6 +1,5 @@
 package com.github.wujiuye.datasource.config;
 
-import com.github.wujiuye.datasource.annotation.EasyMutiDataSource;
 import org.springframework.util.StringUtils;
 
 /**
@@ -38,12 +37,14 @@ public class DataSourceConfigFactory {
         if (propertys.getMaster() != null) {
             checkMasterSavle(propertys);
             return new MasterSlaveDataSourceConfig(propertys);
-        } else {
+        } else if (propertys.getFirst() != null) {
             checkOneToThen(propertys);
             if (StringUtils.isEmpty(propertys.getDefalutDataSource()) && propertys.getFirst() != null) {
                 throw new RuntimeException("如果不配置默认使用的数据源，那么first库就不能为空，因为不配置默认使用的数据源，就会使用first作为默认的数据源！");
             }
             return new MultiDataSourceConfig(propertys);
+        } else {
+            throw new RuntimeException("未配置任何数据源！");
         }
     }
 

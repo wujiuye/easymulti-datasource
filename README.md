@@ -39,16 +39,28 @@ compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-sta
 
 ### 需要排除spring boot的或者mybatis starter的自动配置
 
-需要排除其它的start自动配置：
+需要排除其它的start自动配置：org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 ```java
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+// 只扫描被@Mapper注解的接口，避免获取service包下的一些service接口
+@MapperScan(basePackages = "com.xxxx", annotationClass = Mapper.class)
+@SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class})
 public class Main{
 }
 ```
 
+### mybatis-plus的配置
+```yaml
+mybatis-plus:
+  global-config:
+    # 配置开启驼峰映射
+    db-column-underline: true
+  mapper-locations: ["classpath:mapper/*.xml"]
+
+```
+
 ### 1、使用主从数据源的配置
 
-```yml
+```yaml
 ### 数据源配置
 easymuti:
   datasource:
@@ -99,7 +111,7 @@ public class XxxServiceImpl{
 
 ### 2、普通的多数据源动态数据源
 
-```yml
+```yaml
 ### 数据源配置
 easymuti:
   datasource:

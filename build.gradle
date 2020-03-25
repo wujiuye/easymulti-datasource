@@ -7,19 +7,22 @@ plugins {
 }
 
 group 'com.github.wujiuye'
-version '1.0.0-RELEASE'
+version '1.0.2-RELEASE'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.0.4.RELEASE'
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.5'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.3.1'
     compile group: 'com.baomidou', name: 'mybatisplus-spring-boot-starter', version: '1.0.5'
     compile group: 'com.baomidou', name: 'mybatis-plus', version: '2.2.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+compileJava.dependsOn(processResources)
 
 // 打包源码
 task sourcesJar(type: Jar) {

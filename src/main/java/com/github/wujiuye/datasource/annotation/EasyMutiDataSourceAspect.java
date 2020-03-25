@@ -1,6 +1,5 @@
 package com.github.wujiuye.datasource.annotation;
 
-import com.github.wujiuye.datasource.EasyMutiRoutingDataSource;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,7 +20,7 @@ import java.lang.reflect.Method;
 @Order(1)
 public class EasyMutiDataSourceAspect {
 
-    @Pointcut("@annotation(com.msyc.database.annotation.OnionDataSource)")
+    @Pointcut("@annotation(com.github.wujiuye.datasource.annotation.EasyMutiDataSource)")
     public void dataSourcePointCut() {
 
     }
