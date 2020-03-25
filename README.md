@@ -74,14 +74,14 @@ easymuti:
     defalutDataSource: master
     # 主数据源
     master:
-      jdbcUrl: jdbc:mysql://rm-wz9w2pj1crm4e2k80.mysql.rds.aliyuncs.com:3306/onion?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
-      username: ycmanger_2b
-      password: cdYqa!#sadi&^cdUYwe98==
+      jdbcUrl: 
+      username: 
+      password: 
     # 从数据源
     slave:
-      jdbcUrl: jdbc:mysql://rr-wz914q2o8d8q75a90.mysql.rds.aliyuncs.com:3306/onion?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
-      username: ycmanger_2b
-      password: cdYqa!#sadi&^cdUYwe98==
+      jdbcUrl: 
+      username: 
+      password: 
 ```
 
 项目中使用
@@ -124,17 +124,17 @@ easymuti:
     # 配置默认使用的数据源，不配置则默认使用master
     defalutDataSource: master
     first:
-      jdbcUrl: jdbc:mysql://rm-wz9w2pj1crm4e2k80.mysql.rds.aliyuncs.com:3306/onion?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
-      username: ycmanger_2b
-      password: cdYqa!#sadi&^cdUYwe98==
+      jdbcUrl: 
+      username: 
+      password: 
     second:
-      jdbcUrl: jdbc:mysql://rr-wz914q2o8d8q75a90.mysql.rds.aliyuncs.com:3306/onion?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
-      username: ycmanger_2b
-      password: cdYqa!#sadi&^cdUYwe98==
+      jdbcUrl: 
+      username: 
+      password: 
     third:
-      jdbcUrl: jdbc:mysql://rr-wz914q2o8d8q75a90.mysql.rds.aliyuncs.com:3306/onion?useUnicode=true&characterEncoding=UTF-8&useLocalSessionState=true&rewriteBatchedStat&zeroDateTimeBehavior=convertToNull
-      username: ycmanger_2b
-      password: cdYqa!#sadi&^cdUYwe98==
+      jdbcUrl: 
+      username: 
+      password: 
     # ....还可以继续配置，配多少个就能用多少个
 ```
 
@@ -177,7 +177,6 @@ public class XxxServiceImpl{
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Fifth)
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Sixth)
 @EasyMutiDataSource(EasyMutiDataSource.MultipleDataSource.Seventh)
-// .......
 ```
 
 ### 版本更新说明
