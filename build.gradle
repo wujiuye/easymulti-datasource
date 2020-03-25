@@ -7,7 +7,9 @@ plugins {
 }
 
 group 'com.github.wujiuye'
-version '1.0.2-RELEASE'
+// 测试可先发布到本地仓库测试：publishPublishMyProjectPublicationToMavenLocal
+// 每发布一次到本地仓库将版本号+1，测试完成后也需要将版本号加1再发布
+version '1.0.5-RELEASE'
 
 repositories {
     mavenCentral()
@@ -15,6 +17,7 @@ repositories {
 
 dependencies {
     compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.0.4.RELEASE'
+    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.0.4.RELEASE'
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.5'
     compile group: 'com.zaxxer', name: 'HikariCP', version: '3.3.1'
     compile group: 'com.baomidou', name: 'mybatisplus-spring-boot-starter', version: '1.0.5'
