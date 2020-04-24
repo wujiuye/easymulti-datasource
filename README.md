@@ -213,23 +213,22 @@ public class XxxServiceImpl{
 版本号：1.0.6\
 更新说明：解决在同一个线程下数据源多次切换的回溯问题
 
-easymulti-datasource-spring-boot-starter，作者开源的几个开源项目都有在项目中使用，遇到问题会及时解决。
-
 在某些场景下，我们可能需要多次切换数据源才能处理完同一个请求，也就是在一个线程上多次切换数据源。
 
-比如：ServiceA.a调用ServiceB.b，ServiceB.b调用ServiceC.c。ServiceA.a使用从库，ServiceB.b使用主库，ServiceC.c又使用从库，
-因此，这一调用链路一共需要动态切换三次数据源。
+比如：`ServiceA.a`调用`ServiceB.b`，`ServiceB.b`调用`ServiceC.c`。`ServiceA.a`使用从库，`ServiceB.b`使用主库，`ServiceC.c`又使用从库，因此，这一调用链路一共需要动态切换三次数据源。
 
-数据源的切换我们都是使用切面完成，在方法执行之前切换，从注解上获取到数据源的key，将其保持到ThreadLocal。
-当方法执行完成或异常时，需要从ThreadLocal中移除切换记录，否则可能会影响别的不显示声明切换数据源的地方获取到错误的数据源，
-并且我们也需要保证ThreadLocal的remove方法被调用。这在多次切换数据源的情况下就会出问题。
+数据源的切换我们都是使用`AOP`完成，在方法执行之前切换，从注解上获取到数据源的`key`，将其保持到`ThreadLocal`。
 
-当调用ServiceA.a时，切换到从库，方法执行到一半时由于需要调用ServiceB.b方法，此时数据源又被切换到了主库，
-也就是说ServiceB.b方法切面将ServiceA.a方法切面的切换记录被覆盖了。当ServiceB.b方法执行完成后，ServiceB.b方法切面调用ThreadLocal的remove方法，
-将ServiceB.b方法切面的切换记录移除，因此，再回到ServiceA.a方法继续往下执行时，由于ThreadLocal存储null, 如果配置了默认使用的数据源为主库，
-那么ServiceA.a方法后面的数据库操作就都在主库上操作了。
+当方法执行完成或异常时，需要从`ThreadLocal`中移除切换记录，否则可能会影响别的不显示声明切换数据源的地方获取到错误的数据源，并且我们也需要保证`ThreadLocal`的`remove`方法被调用，这在多次切换数据源的情况下就会出问题。
 
-通过切面切换数据源的方法如下：
+当调用`ServiceA.a`时，切换到从库，方法执行到一半时由于需要调用`ServiceB.b`方法，此时数据源又被切换到了主库，也就是说`ServiceB.b`方法切面将`ServiceA.a`方法切面的数据源切换记录覆盖了。
+
+当`ServiceB.b`方法执行完成后，`ServiceB.b`方法切面调用`ThreadLocal`的`remove`方法，将`ServiceB.b`方法切面的数据源切换记录移除，此时回到`ServiceA.a`方法继续往下执行时，由于`ThreadLocal`存储`null`, 如果配置了默认使用的数据源为主库，那么`ServiceA.a`方法后面的数据库操作就都在主库上操作了。
+
+这一现象我们可以称为方法调用回溯导致的动态数据源切换故障。
+
+使用切面实现动态切换数据源的方法如下：
+
 ```java
 public class EasyMutiDataSourceAspect {
 /**
@@ -258,34 +257,35 @@ public class EasyMutiDataSourceAspect {
 }
 ```
 
-为解决这个问题，我想到的是使用栈这个数据结构存储数据源切换记录，当调用ServiceA.a方法需要切换数据源时，
-将数据源的key push到栈顶，当在ServiceA.a方法中调用ServiceB.b方法时，如果需要切换数据源，
-也将ServiceB.b方法需要切换的数据源的key push到栈顶。
+为解决这个问题，我想到的是使用栈这个数据结构存储动态数据源的切换记录。当调用`ServiceA.a`方法需要切换数据源时，将数据源的`key` `push`到栈顶，当在`ServiceA.a`方法中调用`ServiceB.b`方法时，切面切换数据源也将`ServiceB.b`方法需要切换的数据源的`key` `push`到栈顶。代码如下：
 
 ```java
 public final class DataSourceContextHolder {
- /**
+   
+   /**
      * 设置数据源
      *
      * @param multipleDataSource
      */
     public static void setDataSource(EasyMutiDataSource.MultipleDataSource multipleDataSource) {
+        // 用于存储切换记录的栈
         DataSourceSwitchStack switchStack = multipleDataSourceThreadLocal.get();
         if (switchStack == null) {
             switchStack = new DataSourceSwitchStack();
             multipleDataSourceThreadLocal.set(switchStack);
         }
+        // 将当前切换的数据源推送到栈顶，覆盖上次切换的数据源
         switchStack.push(multipleDataSource);
     }
 }
 ```
 
-ServiceB.b方法执行完成时，方法切面需要调用clearDataSource方法将切换的数据源key从ThreadLocal中移除，这时我们可以先从
-栈顶中移除一个元素，再判断栈的是否为空，为空再将栈从ThreadLocal中移除。
+`ServiceB.b`方法执行完成时，方法切面需要调用`clearDataSource`方法将切换的数据源的`key`从`ThreadLocal`中移除，这时我们可以先从栈顶中移除一个元素，再判断栈是否为空，为空再将栈从`ThreadLocal`中移除。`pop`操作将`ServiceB.b`方法切面切换的数据源的`key`移除后，栈顶就是调用`ServiceB.b`方法之前使用的数据源。
 
 ```java
 public final class DataSourceContextHolder {
-/**
+    
+   /**
      * 清除数据源
      */
     public static void clearDataSource() {
@@ -293,7 +293,9 @@ public final class DataSourceContextHolder {
         if (switchStack == null) {
             return;
         }
+        // 回退数据源切换
         switchStack.pop();
+        // 栈空则表示所有切换都已经还原，可以remove了
         if (switchStack.size() == 0) {
             multipleDataSourceThreadLocal.remove();
         }
@@ -301,11 +303,9 @@ public final class DataSourceContextHolder {
 }
 ```
 
-只有所有切点都调用完clearDataSource方法之后，再将切换栈从ThreadLocal中移除，每个切点执行完成之后，
-调用clearDataSource方法将自身的切换记录移除，栈顶存储的就是前一个切点的切换记录，这就可以解决同一个线程下数据源多次切换的回溯问题，
-使数据源切换正常。
+只有所有切点都调用完`clearDataSource`方法之后，再将保持数据源切换记录的栈从`ThreadLocal`中移除。每个切点执行完成之后，调用`clearDataSource`方法将自身的切换记录从栈中移除，栈顶存储的就是前一个切点的切换记录，即回退数据源切换。这就可以解决同一个线程下数据源多次切换的回溯问题，使数据源切换正常。
 
-存储切换记录的栈在easymulti-datasource的时候如下。
+存储切换记录的栈在`easymulti-datasource`的时候如下。
 
 ```java
 class DataSourceSwitchStack {
@@ -341,4 +341,5 @@ class DataSourceSwitchStack {
 
 }
 ```
+
 
