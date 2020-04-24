@@ -9,7 +9,7 @@ public final class DataSourceContextHolder {
     /**
      * 保存当前线程使用的数据源
      */
-    private static final ThreadLocal<EasyMutiDataSource.MultipleDataSource> multipleDataSourceThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<DataSourceSwitchStack> multipleDataSourceThreadLocal = new ThreadLocal<>();
 
     /**
      * 设置数据源
@@ -17,7 +17,12 @@ public final class DataSourceContextHolder {
      * @param multipleDataSource
      */
     public static void setDataSource(EasyMutiDataSource.MultipleDataSource multipleDataSource) {
-        multipleDataSourceThreadLocal.set(multipleDataSource);
+        DataSourceSwitchStack switchStack = multipleDataSourceThreadLocal.get();
+        if (switchStack == null) {
+            switchStack = new DataSourceSwitchStack();
+            multipleDataSourceThreadLocal.set(switchStack);
+        }
+        switchStack.push(multipleDataSource);
     }
 
     /**
@@ -26,14 +31,24 @@ public final class DataSourceContextHolder {
      * @return
      */
     public static EasyMutiDataSource.MultipleDataSource getDataSource() {
-        return multipleDataSourceThreadLocal.get();
+        if (multipleDataSourceThreadLocal.get() == null) {
+            return null;
+        }
+        return multipleDataSourceThreadLocal.get().peek();
     }
 
     /**
      * 清除数据源
      */
     public static void clearDataSource() {
-        multipleDataSourceThreadLocal.remove();
+        DataSourceSwitchStack switchStack = multipleDataSourceThreadLocal.get();
+        if (switchStack == null) {
+            return;
+        }
+        switchStack.pop();
+        if (switchStack.size() == 0) {
+            multipleDataSourceThreadLocal.remove();
+        }
     }
 
 }
