@@ -2,6 +2,7 @@ package com.github.wujiuye.datasource.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * yml配置
@@ -74,6 +75,12 @@ public class DataSourcePropertys {
         public void setPassword(String password) {
             this.password = password;
         }
+
+        public boolean isEmpty() {
+            return StringUtils.isEmpty(jdbcUrl)
+                    || StringUtils.isEmpty(username);
+        }
+
     }
 
     public static class ConnectionPool {

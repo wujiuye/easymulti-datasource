@@ -34,10 +34,10 @@ public class DataSourceConfigFactory {
      * @return
      */
     public static AbstractDataSourceConfig getDataSourceConfig(DataSourcePropertys propertys) {
-        if (propertys.getMaster() != null) {
+        if (propertys.getMaster() != null && !propertys.getMaster().isEmpty()) {
             checkMasterSavle(propertys);
             return new MasterSlaveDataSourceConfig(propertys);
-        } else if (propertys.getFirst() != null) {
+        } else if (propertys.getFirst() != null && !propertys.getFirst().isEmpty()) {
             checkOneToThen(propertys);
             if (StringUtils.isEmpty(propertys.getDefalutDataSource()) && propertys.getFirst() != null) {
                 throw new RuntimeException("如果不配置默认使用的数据源，那么first库就不能为空，因为不配置默认使用的数据源，就会使用first作为默认的数据源！");

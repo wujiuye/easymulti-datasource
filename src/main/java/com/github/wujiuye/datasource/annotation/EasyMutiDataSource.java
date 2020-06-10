@@ -46,7 +46,16 @@ public @interface EasyMutiDataSource {
         Seventh,
         Eighth,
         Ninth,
-        Tenth
+        Tenth;
+
+        public static MultipleDataSource valueBy(String name) {
+            for (MultipleDataSource source : MultipleDataSource.values()) {
+                if (source.name().equalsIgnoreCase(name)) {
+                    return source;
+                }
+            }
+            throw new NullPointerException("未定义的：" + name);
+        }
     }
 
     /**
