@@ -23,7 +23,7 @@ public class MasterSlaveDataSourceConfig extends AbstractDataSourceConfig {
     public EasyMutiDataSource.MultipleDataSource defaultDataSource() {
         String defaultDb = propertys.getDefalutDataSource();
         if (!StringUtils.isEmpty(defaultDb)) {
-            return EasyMutiDataSource.MultipleDataSource.valueOf(defaultDb);
+            return EasyMutiDataSource.MultipleDataSource.valueBy(defaultDb);
         }
         return EasyMutiDataSource.MultipleDataSource.Master;
     }

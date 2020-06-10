@@ -23,7 +23,7 @@ public class MultiDataSourceConfig extends AbstractDataSourceConfig {
     public EasyMutiDataSource.MultipleDataSource defaultDataSource() {
         String defaultDb = propertys.getDefalutDataSource();
         if (!StringUtils.isEmpty(defaultDb)) {
-            return EasyMutiDataSource.MultipleDataSource.valueOf(defaultDb);
+            return EasyMutiDataSource.MultipleDataSource.valueBy(defaultDb);
         }
         return EasyMutiDataSource.MultipleDataSource.First;
     }
@@ -31,45 +31,45 @@ public class MultiDataSourceConfig extends AbstractDataSourceConfig {
     @Override
     public Map<Object, DataSource> dataSource() {
         Map<Object, DataSource> dataSourceMap = new HashMap<>();
-        if (propertys.getFirst() != null) {
+        if (propertys.getFirst() != null && !propertys.getFirst().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.First,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getFirst(), propertys.getPool()));
         }
-        if (propertys.getSecond() != null) {
+        if (propertys.getSecond() != null && !propertys.getSecond().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Second,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getSecond(), propertys.getPool()));
         }
-        if (propertys.getThird() != null) {
+        if (propertys.getThird() != null && !propertys.getThird().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Third,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getThird(), propertys.getPool()));
         }
-        if (propertys.getFourth() != null) {
+        if (propertys.getFourth() != null && !propertys.getFourth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Fourth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getFourth(), propertys.getPool()));
         }
-        if (propertys.getFifth() != null) {
+        if (propertys.getFifth() != null && !propertys.getFifth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Fifth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getFifth(), propertys.getPool()));
         }
-        if (propertys.getSixth() != null) {
+        if (propertys.getSixth() != null && !propertys.getSixth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Sixth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getSixth(), propertys.getPool()));
         }
-        if (propertys.getSeventh() != null) {
+        if (propertys.getSeventh() != null && !propertys.getSeventh().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Seventh,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getSeventh(), propertys.getPool()));
         }
-        if (propertys.getEighth() != null) {
+        if (propertys.getEighth() != null && !propertys.getEighth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Eighth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getEighth(), propertys.getPool()));
         }
-        if (propertys.getNinth() != null) {
+        if (propertys.getNinth() != null && !propertys.getNinth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Ninth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getNinth(), propertys.getPool()));
         }
-        if (propertys.getTenth() != null) {
+        if (propertys.getTenth() != null && !propertys.getTenth().isEmpty()) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Tenth,
-                    createDataSource(propertys.getMaster(), propertys.getPool()));
+                    createDataSource(propertys.getTenth(), propertys.getPool()));
         }
         return dataSourceMap;
     }
