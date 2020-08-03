@@ -44,18 +44,18 @@ public abstract class AbstractDataSourceConfig {
      */
     protected DataSource createDataSource(DataSourcePropertys.MasterSlaveDataSource masterSlaveDataSource, DataSourcePropertys.ConnectionPool connectionPool) {
         if (connectionPool == null || !connectionPool.isUseConnPool()) {
+            return new DriverDataSource(masterSlaveDataSource.getJdbcUrl(),
+                    "com.mysql.jdbc.Driver",
+                    new Properties(),
+                    masterSlaveDataSource.getUsername(),
+                    masterSlaveDataSource.getPassword());
+        } else {
             return new HikariCPDataSourcePoolConfig()
                     .usePoolWithConfig("com.mysql.jdbc.Driver",
                             masterSlaveDataSource.getJdbcUrl(),
                             masterSlaveDataSource.getUsername(),
                             masterSlaveDataSource.getPassword(),
                             connectionPool);
-        } else {
-            return new DriverDataSource(masterSlaveDataSource.getJdbcUrl(),
-                    "com.mysql.jdbc.Driver",
-                    new Properties(),
-                    masterSlaveDataSource.getUsername(),
-                    masterSlaveDataSource.getPassword());
         }
     }
 
