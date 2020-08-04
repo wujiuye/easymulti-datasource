@@ -100,11 +100,11 @@ public class DataSourceConfig {
      * @param easyMutiRoutingDataSource
      * @return
      */
-    @Bean
-    public PlatformTransactionManager mysqlPlatformTransactionManager(@Autowired EasyMutiRoutingDataSource easyMutiRoutingDataSource) {
+    @Bean("easyMutiPlatformTransactionManager")
+    public PlatformTransactionManager easyMutiPlatformTransactionManager(
+            @Autowired EasyMutiRoutingDataSource easyMutiRoutingDataSource) {
         return new DataSourceTransactionManager(easyMutiRoutingDataSource);
     }
-
 
     @Bean
     @ConditionalOnMissingBean

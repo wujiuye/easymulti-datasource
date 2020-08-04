@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.github.wujiuye.datasource.DataSourceAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.github.wujiuye.datasource.DataSourceAutoConfiguration,\
+com.github.wujiuye.datasource.tx.TransactionAutoConfig
