@@ -1,5 +1,6 @@
 package com.github.wujiuye.datasource.annotation;
 
+import com.github.wujiuye.datasource.constant.AspectJOrderConstant;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,12 +13,13 @@ import java.lang.reflect.Method;
 
 /**
  * 多数据源切面
+ * 必须在事务之前
  *
  * @author wujiuye 2020/03/15
  */
 @EnableAspectJAutoProxy
 @Aspect
-@Order(1)
+@Order(AspectJOrderConstant.DATA_SOUCE_ASPECT_ORDER)
 public class EasyMutiDataSourceAspect {
 
     @Pointcut("@annotation(com.github.wujiuye.datasource.annotation.EasyMutiDataSource)")
