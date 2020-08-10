@@ -1,6 +1,7 @@
 package com.github.wujiuye.datasource.tx;
 
 import com.github.wujiuye.datasource.config.DataSourceConfig;
+import com.github.wujiuye.datasource.constant.AspectJOrderConstant;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -9,7 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-import org.springframework.core.Ordered;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +48,8 @@ public class TransactionAutoConfig {
         BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
         advisor.setTransactionAttributeSource(transactionAttributeSource());
         advisor.setAdvice(easyMutiTransactionInterceptor());
-        advisor.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        // 必须要在切换数据源之后
+        advisor.setOrder(AspectJOrderConstant.TRANSACTION_ASPECT_ORDER);
         return advisor;
     }
 
