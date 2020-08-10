@@ -8,13 +8,13 @@ package com.github.wujiuye.datasource.constant;
 public interface AspectJOrderConstant {
 
     /**
-     * 数据源切换切面order
-     */
-    int DATA_SOUCE_ASPECT_ORDER = 0;
-
-    /**
      * 事务切换切面order
      */
-    int TRANSACTION_ASPECT_ORDER = DATA_SOUCE_ASPECT_ORDER - 1;
+    int TRANSACTION_ASPECT_ORDER = 0;
+
+    /**
+     * 数据源切换切面order
+     */
+    int DATA_SOUCE_ASPECT_ORDER = TRANSACTION_ASPECT_ORDER - 1;
 
 }
