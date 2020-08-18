@@ -5,6 +5,7 @@
 ## 关于版本
 * 1.x版本：对应mybatis-plus2.x版本，spring boot 2.0.x版本，最新版本：1.1.1-RELEASE 
 * 2.x版本：对应mybatis-plus3.x版本，spring boot 2.3.x版本，最新版本：2.0.1-RELEASE
+
 关于更新：
 * 1.x版本不再更新特性，只维护；
 * 2.x版本支持Mapper AOP切面监听事务；
