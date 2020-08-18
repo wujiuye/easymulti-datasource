@@ -2,13 +2,21 @@
 
 项目地址：[https://github.com/wujiuye/easymulti-datasource-spring-boot-starter](https://github.com/wujiuye/easymulti-datasource-spring-boot-starter)
 
+## 关于版本
+* 1.x版本：对应mybatis-plus2.x版本，spring boot 2.0.x版本，最新版本：1.1.1-RELEASE 
+* 2.x版本：对应mybatis-plus3.x版本，spring boot 2.3.x版本，最新版本：2.0.1-RELEASE
+
+关于更新：
+* 1.x版本不再更新特性，只维护；
+* 2.x版本支持Mapper AOP切面监听事务；
+
+## 简介
+
 多数据源动态切换似乎已经成了微服务的标配，做过那么多项目发现每个项目都要配一个动态数据源，都要写一个切面去实现动态切换，因此，我想将这些繁琐的配置封装为`starter`，拿来即用。
 
 去年我为项目封装过一个支持多数据库类型加`sharding-jdbc`的动态数据源，如`mysql+redshift`，但这毕竟是少数，大多数公司都只用`mysql`，所以就不考虑多数据库类型了，而分库可能更多的是用`mycat`，因此，我实现的只是一个单数据库类型（`mysql`）的动态数据源。
 
 `easymulti`支持主从库模式，如果多于两个数据源，可切换为普通模式使用，普通模式支持最多十个数据源。使用非常简单，只需要简单的在`yml`中配置数据源，就可以使用动态多数据源，然后在项目中使用注解切换数据源。并且整合了`mybatis-plus`，不再需要繁琐的配置。
-
-建议使用版本：1.0.8 or 1.1.1
 
 ### 提供两种动态多数据源
 
@@ -350,3 +358,6 @@ class DataSourceSwitchStack {
 
 #### 版本1.1.1
 * 修复1.0.9x存在的bug；
+
+#### 版本2.0.1
+* 升级mybatis-plus到3.x版本，支持spring boot2.3.x
