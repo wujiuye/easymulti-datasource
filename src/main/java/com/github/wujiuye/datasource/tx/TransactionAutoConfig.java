@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.config.TransactionManagementConfigUtils;
@@ -33,8 +33,8 @@ public class TransactionAutoConfig {
 
     @Resource
     private TransactionProps transactionProps;
-    @Resource(name = "easyMutiPlatformTransactionManager")
-    private PlatformTransactionManager platformTransactionManager;
+    @Resource
+    private TransactionManager transactionManager;
 
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -55,25 +55,13 @@ public class TransactionAutoConfig {
 
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public TransactionInterceptor easyMutiTransactionInterceptor() {
-        TransactionInterceptor interceptor = new TransactionInterceptor() {
+        TransactionInterceptor interceptor = new TransactionInterceptorDelegate() {
             @Override
             public Object invoke(MethodInvocation invocation) throws Throwable {
-                if (!transactionProps.isOpenChain()) {
-                    return super.invoke(invocation);
-                }
-                Class<?> tagClass = invocation.getThis().getClass();
-                TransactionInvokeContext.push(tagClass, invocation.getMethod());
-                try {
-                    return super.invoke(invocation);
-                } catch (Throwable throwable) {
-                    TransactionInvokeContext.setThrowable(throwable);
-                    throw throwable;
-                } finally {
-                    TransactionInvokeContext.pop();
-                }
+                return super.invokeChain(invocation, transactionProps.isOpenChain());
             }
         };
-        interceptor.setTransactionManager(platformTransactionManager);
+        interceptor.setTransactionManager(transactionManager);
         interceptor.setTransactionAttributeSource(transactionAttributeSource());
         return interceptor;
     }
