@@ -1,6 +1,7 @@
 package com.github.wujiuye.datasource.tx;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAttribute;
 
 import java.lang.reflect.Method;
 
@@ -21,18 +22,12 @@ public class TransactionInvokeContext {
         return CONTEXT.get();
     }
 
-    static void push(Class<?> tagClass, Method method) {
-        Transactional transactional = method.getAnnotation(Transactional.class);
-        if (transactional == null) {
-            transactional = tagClass.getAnnotation(Transactional.class);
-            if (transactional == null) {
-                return;
-            }
-        }
+    static void push(Method method, Transactional transactional, TransactionAttribute attribute) {
         TransactionInvokeChain chain = ensureChain();
         TxMethodMetadata methodMetadata = new TxMethodMetadata();
         methodMetadata.setMethod(method);
         methodMetadata.setTransactional(transactional);
+        methodMetadata.setTransactionalAttribute(attribute);
         chain.push(methodMetadata);
     }
 

@@ -1,19 +1,22 @@
 package com.github.wujiuye.datasource.config;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties;
-import com.baomidou.mybatisplus.spring.boot.starter.SpringBootVFS;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
+import com.baomidou.mybatisplus.autoconfigure.SpringBootVFS;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.wujiuye.datasource.EasyMutiRoutingDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -69,6 +72,7 @@ public class DataSourceConfig {
         if (configuration == null && !StringUtils.hasText(properties.getConfigLocation())) {
             configuration = new MybatisConfiguration();
         }
+        assert configuration != null;
         configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         factory.setConfiguration(configuration);
         if (properties.getConfigurationProperties() != null) {
@@ -87,9 +91,12 @@ public class DataSourceConfig {
             factory.setMapperLocations(properties.resolveMapperLocations());
         }
         if (!ObjectUtils.isEmpty(properties.getGlobalConfig())) {
+            if (properties.getGlobalConfig().getDbConfig() == null) {
+                properties.getGlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+            }
             // 框架默认不提供主键自动生成策略，使用数据库的自动生成策略
-            properties.getGlobalConfig().setIdType(IdType.AUTO.getKey());
-            factory.setGlobalConfig(properties.getGlobalConfig().convertGlobalConfiguration());
+            properties.getGlobalConfig().getDbConfig().setIdType(IdType.AUTO);
+            factory.setGlobalConfig(properties.getGlobalConfig());
         }
         return factory.getObject();
     }
@@ -100,8 +107,9 @@ public class DataSourceConfig {
      * @param easyMutiRoutingDataSource
      * @return
      */
-    @Bean("easyMutiPlatformTransactionManager")
-    public PlatformTransactionManager easyMutiPlatformTransactionManager(
+    @Bean
+    @ConditionalOnClass(PlatformTransactionManager.class)
+    public TransactionManager easyMutiPlatformTransactionManager(
             @Autowired EasyMutiRoutingDataSource easyMutiRoutingDataSource) {
         return new DataSourceTransactionManager(easyMutiRoutingDataSource);
     }
