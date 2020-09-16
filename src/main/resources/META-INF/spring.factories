@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.github.wujiuye.datasource.DataSourceAutoConfiguration,\
 com.github.wujiuye.datasource.tx.TransactionAutoConfig,\
-com.github.wujiuye.datasource.sqlwatcher.WatcherAutoConfiguration
+com.github.wujiuye.datasource.sqlwatcher.base.WatcherAutoConfiguration

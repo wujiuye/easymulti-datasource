@@ -1,5 +1,8 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
+import com.github.wujiuye.datasource.sqlwatcher.CommandType;
+import com.github.wujiuye.datasource.sqlwatcher.MatchItem;
+import com.github.wujiuye.datasource.sqlwatcher.WatchMetadata;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 

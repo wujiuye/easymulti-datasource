@@ -1,6 +1,10 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
+import com.github.wujiuye.datasource.sqlwatcher.CommandType;
+import com.github.wujiuye.datasource.sqlwatcher.WatchMetadata;
+import com.github.wujiuye.datasource.sqlwatcher.base.MatchResult;
+import com.github.wujiuye.datasource.sqlwatcher.base.TableFieldChangeWatcher;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitorAdapter;
 import net.sf.jsqlparser.schema.Column;

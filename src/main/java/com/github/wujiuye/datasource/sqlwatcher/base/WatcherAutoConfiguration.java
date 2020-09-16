@@ -1,9 +1,10 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import javax.annotation.Resource;
 
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
  * @author wujiuye 2020/07/10
  */
 @Configuration
+@Import(SqlWatcherProps.class)
 @ConditionalOnBean(SqlWatcherProps.class)
 public class WatcherAutoConfiguration {
 
@@ -20,19 +22,16 @@ public class WatcherAutoConfiguration {
     private SqlWatcherProps sqlWatcherProps;
 
     @Bean
-    @ConditionalOnMissingBean
     public SqlWatcherPlugin dataChangePlugin() {
         return new SqlWatcherPlugin();
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public ModifySqlParser dataChangeSqlParser() {
         return new ModifySqlParser();
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public TableFieldChangeWatcher tableFieldChangeWatcher() {
         return new TableFieldSubject();
     }

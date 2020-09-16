@@ -15,13 +15,15 @@ public interface TableFieldObserver {
      *
      * @return
      */
-    default WatchMetadata getObserveMetadata() {
-        throw new NullPointerException("未注册事件！");
-    }
+    WatchMetadata getObserveMetadata();
 
     default Set<WatchMetadata> observeMetadatas() {
         Set<WatchMetadata> set = new HashSet<>();
-        set.add(getObserveMetadata());
+        WatchMetadata watchMetadata = getObserveMetadata();
+        if (watchMetadata == null) {
+            throw new NullPointerException("未注册事件！");
+        }
+        set.add(watchMetadata);
         return set;
     }
 

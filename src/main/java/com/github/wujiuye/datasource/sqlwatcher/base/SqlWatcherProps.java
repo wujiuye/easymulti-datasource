@@ -1,4 +1,4 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;

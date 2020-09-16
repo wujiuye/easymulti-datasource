@@ -1,11 +1,16 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
+import com.github.wujiuye.datasource.sqlwatcher.AsyncConsumer;
+import com.github.wujiuye.datasource.sqlwatcher.MatchItem;
+import com.github.wujiuye.datasource.sqlwatcher.TableFieldObserver;
+import com.github.wujiuye.datasource.sqlwatcher.WatchMetadata;
 import com.github.wujiuye.datasource.tx.TransactionInvokeContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -24,7 +29,7 @@ class TableFieldSubject implements TableFieldChangeWatcher, InitializingBean {
     /**
      * 延迟消费事件线程池
      */
-    @Autowired
+    @Autowired(required = false)
     private AsyncTaskExecutor executor;
 
     /**
@@ -36,17 +41,24 @@ class TableFieldSubject implements TableFieldChangeWatcher, InitializingBean {
     private Set<WatchMetadata> watchMetadataSet = new HashSet<>();
     private Map<String, Set<TableFieldObserver>> watchObserverMap = new HashMap<>();
 
-    private final static ConcurrentMap<String, AsyncFuture<List<AsyncConsumer>>> futureMap = new ConcurrentHashMap<>();
+    private final static ConcurrentMap<String, List<AsyncConsumer>> consumerMap = new ConcurrentHashMap<>();
+
+    private void getExecutor() {
+        if (executor == null) {
+            executor = new ConcurrentTaskExecutor();
+        }
+    }
 
     @Override
     public void afterPropertiesSet() {
+        getExecutor();
         if (!CollectionUtils.isEmpty(observers)) {
             for (TableFieldObserver observer : observers) {
                 Set<WatchMetadata> watchMetadatas = observer.observeMetadatas();
-                watchMetadataSet.addAll(watchMetadatas);
                 if (CollectionUtils.isEmpty(watchMetadatas)) {
                     continue;
                 }
+                watchMetadataSet.addAll(watchMetadatas);
                 for (WatchMetadata metadata : watchMetadatas) {
                     Set<TableFieldObserver> os = watchObserverMap.computeIfAbsent(metadata.getTable(), key -> new HashSet<>());
                     os.add(observer);
@@ -69,22 +81,18 @@ class TableFieldSubject implements TableFieldChangeWatcher, InitializingBean {
         if (CollectionUtils.isEmpty(watchMetadataMap)) {
             return;
         }
-        futureMap.put(transactionId, new AsyncFuture<>());
+
         List<AsyncConsumer> consumers = new ArrayList<>();
-        try {
-            for (MatchItem matchItem : matchResult.toMatchItems()) {
-                for (TableFieldObserver observer : watchObserverMap.get(matchItem.getTable())) {
-                    AsyncConsumer consumer = observer.observe(matchResult.getCommandType(), matchItem);
-                    if (consumer == null) {
-                        continue;
-                    }
-                    consumers.add(consumer);
+        for (MatchItem matchItem : matchResult.toMatchItems()) {
+            for (TableFieldObserver observer : watchObserverMap.get(matchItem.getTable())) {
+                AsyncConsumer consumer = observer.observe(matchResult.getCommandType(), matchItem);
+                if (consumer == null) {
+                    continue;
                 }
+                consumers.add(consumer);
             }
-        } finally {
-            AsyncFuture<List<AsyncConsumer>> future = futureMap.get(transactionId);
-            future.complete(consumers);
         }
+        consumerMap.put(transactionId, consumers);
         // 存储事务，则事务方法完成之后再提交
         if (TransactionInvokeContext.currentExistTransaction()) {
             // 添加事务监听器
@@ -115,20 +123,17 @@ class TableFieldSubject implements TableFieldChangeWatcher, InitializingBean {
     }
 
     private void complete(final String transactionId, Throwable throwable) {
-        AsyncFuture<List<AsyncConsumer>> future = futureMap.get(transactionId);
-        if (future == null) {
+        List<AsyncConsumer> consumers = consumerMap.remove(transactionId);
+        if (consumers == null) {
             return;
         }
         executor.execute(() -> {
             try {
-                List<AsyncConsumer> consumers = future.get();
                 for (AsyncConsumer consumer : consumers) {
                     consumer.complete(throwable);
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
-            } finally {
-                futureMap.remove(transactionId);
+                logger.error(e.getMessage(), e);
             }
         });
     }

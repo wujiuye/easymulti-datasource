@@ -1,4 +1,6 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
+
+import com.github.wujiuye.datasource.sqlwatcher.WatchMetadata;
 
 import java.util.Set;
 

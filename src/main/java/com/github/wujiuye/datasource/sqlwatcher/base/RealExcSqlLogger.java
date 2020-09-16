@@ -1,4 +1,4 @@
-package com.github.wujiuye.datasource.sqlwatcher;
+package com.github.wujiuye.datasource.sqlwatcher.base;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author wujiuye 2020/07/12
  */
-public class RealExcSqlLogger {
+class RealExcSqlLogger {
 
     private final Logger logger = LoggerFactory.getLogger(RealExcSqlLogger.class);
 
