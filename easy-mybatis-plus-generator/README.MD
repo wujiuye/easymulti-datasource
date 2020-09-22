@@ -6,7 +6,7 @@
 * 3、接受使用一些默认配置：为xml文件自动生成baseResultMap、不开启二级缓存、使用lombok、列名自动驼峰映射；
 
 ## 关于版本号
-easy-mybatis-plus-generator选择与mybatis-plus的版本号保持一致，3.3.2版本对应mybatis-plus的3.3.2版本；
+* 2.x版本：对应mybatis-plus3.x版本，也对应mybatis-plus-generator3.x版本，最新版本：2.0.1-RELEASE；
 
 ## 使用方式
 * 第一步：添加依赖
@@ -15,7 +15,7 @@ easy-mybatis-plus-generator选择与mybatis-plus的版本号保持一致，3.3.2
 <dependency>
     <groupId>com.github.wujiuye</groupId>
     <artifactId>easy-mybatis-plus-generator</artifactId>
-    <version>3.3.2</version>
+    <version>2.0.1-RELEASE</version>
 </dependency>
 ```
 当然，还需要数据库的jdbc驱动包，比如mysql
