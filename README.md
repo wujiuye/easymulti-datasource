@@ -9,6 +9,7 @@
 关于更新：
 * 1.x版本不再更新特性，只维护；
 * 2.x版本支持Mapper AOP切面监听事务；
+* 2.1.0版本开始支持sql埋点监听功能，使用方式见版本更新说明；
 
 ## 简介
 
@@ -361,3 +362,58 @@ class DataSourceSwitchStack {
 
 #### 版本2.0.1
 * 升级mybatis-plus到3.x版本，支持spring boot2.3.x
+
+#### 版本2.1.0
+*  支持sql埋点监听功能，并且支持事务，如果当前sql执行存在事务中，则会在事务提交后才会回调sql监听者；
+
+第一步：启用sql埋点监听功能，并且启用事务调用链路追踪功能
+```yaml
+easymuti: 
+  transaction: 
+    open-chain: true
+  sql-watcher:
+    enable: true
+```
+
+第二步：编写观察者，可以有n多个，并且多个观察者也可观察同一个表、甚至相同字段
+```java
+/**
+ * 封装通用逻辑
+ *
+ * @author wujiuye 2020/08/10
+ */
+@Component
+@Slf4j
+public class TestTableFieldObserver implements TableFieldObserver , InitializingBean {
+
+    @Override
+    public Set<WatchMetadata> observeMetadatas() {
+       // 在这里注册要监听哪些表的哪些字段
+    }
+
+    /**
+     * 监听到sql时被同步调用
+     *
+     * @param commandType 事件类型
+     * @param matchResult 匹配的ITEM
+     * @return 返回异步消费者
+     */
+    @Override
+    public AsyncConsumer observe(CommandType commandType, MatchItem matchResult) {
+        // 同步消费
+        // 这里是sql执行之前，可在sql执行之前做一些事情，比如新旧数据的对比，这里查出旧数据
+
+        // 异步消费，再sql执行完成时，或者在事务方法执行完成时（如果存在事务），完成指：正常执行完成 or 方法异常退出
+        return throwable -> {
+            // sql执行抛出异常不处理
+            if (throwable != null) {
+                return;
+            }
+            // 消费事件
+            // ....
+        };
+    }
+
+}
+
+```
