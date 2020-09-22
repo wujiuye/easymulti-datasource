@@ -1,0 +1,3 @@
+include 'easy-mybatis-plus-generator'
+include 'easymulti-datasource-spring-boot-starter'
+
