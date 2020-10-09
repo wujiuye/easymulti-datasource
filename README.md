@@ -1,6 +1,7 @@
 # easymulti-datasource-spring-boot-starter
 
-项目地址：[https://github.com/wujiuye/easymulti-datasource-spring-boot-starter](https://github.com/wujiuye/easymulti-datasource-spring-boot-starter)
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/easymulti-datasource-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/easymulti-datasource-spring-boot-starter)
+[![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## 关于版本
 * 1.x版本：对应mybatis-plus2.x版本，spring boot 2.0.x版本，最新版本：1.1.1-RELEASE 
