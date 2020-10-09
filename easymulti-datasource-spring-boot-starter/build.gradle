@@ -10,7 +10,7 @@ group 'com.github.wujiuye'
 // 测试可先发布到本地仓库测试：publishPublishMyProjectPublicationToMavenLocal
 // 每发布一次到本地仓库将版本号+1，测试完成后也需要将版本号加1再发布
 // 2.0.1 开始支付spring boot 2.3.0版本
-version '2.1.0-RELEASE'
+version '2.1.0-BETA'
 
 repositories {
     mavenCentral()
