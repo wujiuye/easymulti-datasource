@@ -31,8 +31,8 @@ public class MasterSlaveDataSourceConfig extends AbstractDataSourceConfig {
     @Override
     public Map<Object, DataSource> dataSource() {
         Map<Object, DataSource> dataSourceMap = new HashMap<>();
-        DataSource master = createDataSource(propertys.getMaster(), propertys.getPool());
-        DataSource slave = createDataSource(propertys.getSlave(), propertys.getPool());
+        DataSource master = createDataSource(propertys.getMaster());
+        DataSource slave = createDataSource(propertys.getSlave());
         if (master != null) {
             dataSourceMap.put(EasyMutiDataSource.MultipleDataSource.Master, master);
         }

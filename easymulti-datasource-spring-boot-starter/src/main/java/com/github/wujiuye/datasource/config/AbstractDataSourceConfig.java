@@ -39,10 +39,10 @@ public abstract class AbstractDataSourceConfig {
      * 创建数据源
      *
      * @param masterSlaveDataSource 数据源配置
-     * @param connectionPool        连接池配置
      * @return
      */
-    protected DataSource createDataSource(DataSourcePropertys.MasterSlaveDataSource masterSlaveDataSource, DataSourcePropertys.ConnectionPool connectionPool) {
+    protected DataSource createDataSource(DataSourcePropertys.MasterSlaveDataSource masterSlaveDataSource) {
+        DataSourcePropertys.ConnectionPool connectionPool = masterSlaveDataSource.getPool();
         if (connectionPool == null || !connectionPool.isUseConnPool()) {
             return new DriverDataSource(masterSlaveDataSource.getJdbcUrl(),
                     "com.mysql.jdbc.Driver",
