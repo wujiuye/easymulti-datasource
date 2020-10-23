@@ -1,4 +1,4 @@
-package com.github.wujiuye.datasource.sqlwatcher.base;
+package com.github.wujiuye.datasource.sqlwatcher.plugin;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.plugin.*;

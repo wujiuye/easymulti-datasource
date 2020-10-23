@@ -1,4 +1,4 @@
-package com.github.wujiuye.datasource.sqlwatcher.base;
+package com.github.wujiuye.datasource.sqlwatcher.plugin;
 
 import com.github.wujiuye.datasource.sqlwatcher.CommandType;
 import com.github.wujiuye.datasource.sqlwatcher.MatchItem;

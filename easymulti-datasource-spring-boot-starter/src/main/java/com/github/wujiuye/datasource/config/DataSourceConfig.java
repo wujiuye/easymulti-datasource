@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.github.wujiuye.datasource.EasyMutiRoutingDataSource;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionManager;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,7 +67,9 @@ public class DataSourceConfig {
      */
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(@Autowired DataSource dataSource, @Autowired MybatisPlusProperties properties) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Autowired DataSource dataSource,
+                                               @Autowired MybatisPlusProperties properties,
+                                               @Autowired(required = false) List<Interceptor> interceptors) throws Exception {
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
@@ -97,6 +102,9 @@ public class DataSourceConfig {
             // 框架默认不提供主键自动生成策略，使用数据库的自动生成策略
             properties.getGlobalConfig().getDbConfig().setIdType(IdType.AUTO);
             factory.setGlobalConfig(properties.getGlobalConfig());
+        }
+        if (!CollectionUtils.isEmpty(interceptors)) {
+            factory.setPlugins(interceptors.toArray(new Interceptor[0]));
         }
         return factory.getObject();
     }

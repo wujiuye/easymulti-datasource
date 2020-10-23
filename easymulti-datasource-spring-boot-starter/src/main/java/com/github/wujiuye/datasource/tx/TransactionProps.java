@@ -15,7 +15,7 @@ public class TransactionProps {
     /**
      * 是否开启事务方法调用链路监听
      */
-    private boolean openChain;
+    private boolean openChain = false;
 
     public boolean isOpenChain() {
         return openChain;
