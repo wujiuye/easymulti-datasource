@@ -1,7 +1,9 @@
-package com.github.wujiuye.datasource.sqlwatcher.base;
+package com.github.wujiuye.datasource.sqlwatcher.plugin;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import com.github.wujiuye.datasource.config.DataSourceConfig;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -14,8 +16,9 @@ import javax.annotation.Resource;
  * @author wujiuye 2020/07/10
  */
 @Configuration
+@ConditionalOnProperty(value = "easymuti.sql-watcher.enable", havingValue = "true")
+@AutoConfigureBefore(DataSourceConfig.class)
 @Import(SqlWatcherProps.class)
-@ConditionalOnBean(SqlWatcherProps.class)
 public class WatcherAutoConfiguration {
 
     @Resource
@@ -40,7 +43,7 @@ public class WatcherAutoConfiguration {
     @ConditionalOnMissingBean
     public RealExcSqlLogger realExcSqlLogger() {
         RealExcSqlLogger logger = new RealExcSqlLogger();
-        logger.setShowInvokeLink(sqlWatcherProps.getShowRealLogInvokeLink());
+        logger.setShowInvokeLink(sqlWatcherProps.isShowRealLogInvokeLink());
         return logger;
     }
 

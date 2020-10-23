@@ -1,6 +1,5 @@
-package com.github.wujiuye.datasource.sqlwatcher.base;
+package com.github.wujiuye.datasource.sqlwatcher.plugin;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -10,32 +9,31 @@ import org.springframework.stereotype.Component;
  * @author wujiuye 2020/08/18
  */
 @Component
-@ConditionalOnProperty(value = "easymuti.sql-watcher.enable", havingValue = "true")
 @ConfigurationProperties(prefix = "easymuti.sql-watcher")
 public class SqlWatcherProps {
 
     /**
      * 是否启用sql监听埋点功能
      */
-    private Boolean enable;
+    private boolean enable = false;
     /**
      * 是否输出调用链上的sql
      */
-    private Boolean showRealLogInvokeLink;
+    private boolean showRealLogInvokeLink = false;
 
-    public Boolean getShowRealLogInvokeLink() {
+    public boolean isShowRealLogInvokeLink() {
         return showRealLogInvokeLink;
     }
 
-    public Boolean getEnable() {
+    public boolean isEnable() {
         return enable;
     }
 
-    public void setEnable(Boolean enable) {
+    public void setEnable(boolean enable) {
         this.enable = enable;
     }
 
-    public void setShowRealLogInvokeLink(Boolean showRealLogInvokeLink) {
+    public void setShowRealLogInvokeLink(boolean showRealLogInvokeLink) {
         this.showRealLogInvokeLink = showRealLogInvokeLink;
     }
 

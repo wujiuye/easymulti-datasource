@@ -15,11 +15,6 @@ import org.springframework.util.StringUtils;
 public class DataSourcePropertys {
 
     /**
-     * 连接池通用配置
-     */
-    private ConnectionPool pool;
-
-    /**
      * 默认使用哪个数据源，不配置则：
      * 1、主从==>默认使用主库
      * 2、1～10==>默认使用第一个库
@@ -51,6 +46,7 @@ public class DataSourcePropertys {
         private String jdbcUrl;
         private String username;
         private String password;
+        private ConnectionPool pool;
 
         public String getJdbcUrl() {
             return jdbcUrl;
@@ -74,6 +70,14 @@ public class DataSourcePropertys {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public ConnectionPool getPool() {
+            return pool;
+        }
+
+        public void setPool(ConnectionPool pool) {
+            this.pool = pool;
         }
 
         public boolean isEmpty() {
@@ -133,14 +137,6 @@ public class DataSourcePropertys {
         public void setIdleTimeout(long idleTimeout) {
             this.idleTimeout = idleTimeout;
         }
-    }
-
-    public ConnectionPool getPool() {
-        return pool;
-    }
-
-    public void setPool(ConnectionPool pool) {
-        this.pool = pool;
     }
 
     public MasterSlaveDataSource getMaster() {

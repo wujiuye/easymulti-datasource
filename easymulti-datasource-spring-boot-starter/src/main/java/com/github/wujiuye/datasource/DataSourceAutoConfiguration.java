@@ -1,8 +1,9 @@
 package com.github.wujiuye.datasource;
 
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.github.wujiuye.datasource.config.DataSourcePropertys;
-import com.github.wujiuye.datasource.plus.MybatisplusConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -16,7 +17,17 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @EnableConfigurationProperties(DataSourcePropertys.class)
-@Import({DataSourceAutoConfigRegistrar.class, MybatisplusConfig.class})
+@Import({DataSourceAutoConfigRegistrar.class})
 public class DataSourceAutoConfiguration {
+
+    /**
+     * 分页查询插件
+     *
+     * @return
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
+    }
 
 }
