@@ -54,7 +54,7 @@ maven中使用：
 
 gradle中使用：
 ```groovy
-// https://mvnrepository.com/artifact/com.github.wujiuye/miniexcel
+// https://mvnrepository.com/artifact/com.github.wujiuye/easymulti-datasource-spring-boot-starter
 compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-starter', version: '2.1.0'
 ```
 
