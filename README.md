@@ -5,12 +5,15 @@
 
 ## 关于版本
 * 1.x版本：对应mybatis-plus2.x版本，spring boot 2.0.x版本，最新版本：1.1.1-RELEASE 
-* 2.x版本：对应mybatis-plus3.x版本，spring boot 2.3.x版本，最新版本：2.0.1-RELEASE
+* 2.x版本：对应mybatis-plus3.x版本，spring boot 2.3.x版本，最新版本：2.1.0-RELEASE
+* 2.0.1版本开始添加mybatis-plus代码生成器的支持，见[代码生成器项目](easy-mybatis-plus-generator/README.MD)
 
-关于更新：
+## 版本重大特性更新（详情见本文档的版本更新部分）
+>由于新版本与旧版本可能不兼容，为此每个版本都会创建一个分支，便于修复该版本的bug，避免更换到新版本需要改动太多代码；
 * 1.x版本不再更新特性，只维护；
-* 2.x版本支持Mapper AOP切面监听事务；
-* 2.1.0版本开始支持sql埋点监听功能，使用方式见版本更新说明；
+* 2.0.1版本开始Mapper AOP切面支持监听事务状态，支持事务跟踪；
+* 2.1.0版本开始支持sql埋点监听功能，sql事件消费支持监听事务状态、支持在sql执行之前同步做一些事情、sql执行之后异步消费；
+* 2.1.0版本开始支持独立配置每个数据源的连接池；
 
 ## 简介
 
@@ -26,6 +29,7 @@
 * 2、非主从的多数据源
 
 这两种数据源互弃，使用了主从动态数据源，就不能使用非主从多数据源
+> 无论使用哪种，都支持单数据源的使用，如果只使用单数据源，主从数据源模式只需要配置主数据源，非主从的多数据源模式只需要配置Master数据源
 
 ### 自动整合mybatis-plus
 
@@ -34,9 +38,7 @@
 
 ### 连接池
 
-数据库连接池使用的是`HikariCP`。所有数据源共享同一份连接池的配置，注意，是共用同一份
-配置，而不是共用一个连接池。后续的版本将支持除默认共用的数据源配置外，可针对某个数据源
-单独配置连接池。后续版本也会支持选择其它非`HikariCP`的连接池。
+数据库连接池使用的是`HikariCP`，在2.1.0版本中，已支持为每个数据源单独配置连接池。
 
 ### 在项目中添加依赖
 
@@ -46,14 +48,14 @@ maven中使用：
 <dependency>
     <groupId>com.github.wujiuye</groupId>
     <artifactId>easymulti-datasource-spring-boot-starter</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
 gradle中使用：
 ```groovy
 // https://mvnrepository.com/artifact/com.github.wujiuye/miniexcel
-compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-starter', version: '2.0.1'
+compile group: 'com.github.wujiuye', name: 'easymulti-datasource-spring-boot-starter', version: '2.1.0'
 ```
 
 ### 需要排除spring boot的数据源自动配置
@@ -77,7 +79,6 @@ mybatis-plus:
     # 配置开启驼峰映射
     db-column-underline: true
   mapper-locations: ["classpath:mapper/*.xml"]
-
 ```
 
 ### 使用主从数据源的配置
@@ -86,12 +87,6 @@ mybatis-plus:
 ### 数据源配置
 easymuti:
   datasource:
-    # 连接池的配置
-    pool:
-      useConnPool: true
-      maxPoolSize: 10
-      connectionTimeout: 60
-      maxLifetime: 60
     # 配置默认使用的数据源，不配置则默认使用master
     defalutDataSource: master
     # 主数据源
@@ -99,11 +94,23 @@ easymuti:
       jdbcUrl: 
       username: 
       password: 
+      # 连接池的配置
+      pool:
+        useConnPool: true
+        maxPoolSize: 10
+        connectionTimeout: 60
+        maxLifetime: 60
     # 从数据源
     slave:
       jdbcUrl: 
       username: 
       password: 
+      # 连接池的配置
+      pool:
+        useConnPool: true
+        maxPoolSize: 10
+        connectionTimeout: 60
+        maxLifetime: 60
 ```
 
 项目中使用
@@ -137,26 +144,38 @@ public class XxxServiceImpl{
 ### 数据源配置
 easymuti:
   datasource:
-    # 连接池的配置
-    pool:
-      useConnPool: true
-      maxPoolSize: 10
-      connectionTimeout: 60
-      maxLifetime: 60
     # 配置默认使用的数据源，不配置则默认使用master
     defalutDataSource: first
     first:
-      jdbcUrl: jdbc:
+      jdbcUrl: 
       username: 
       password: 
+      # 连接池的配置
+      pool:
+        useConnPool: true
+        maxPoolSize: 10
+        connectionTimeout: 60
+        maxLifetime: 60
     second:
       jdbcUrl: 
       username: 
       password: 
+      # 连接池的配置
+      pool:
+        useConnPool: true
+        maxPoolSize: 10
+        connectionTimeout: 60
+        maxLifetime: 60
     third:
       jdbcUrl: 
       username: 
       password: 
+      # 连接池的配置
+      pool:
+        useConnPool: true
+        maxPoolSize: 10
+        connectionTimeout: 60
+        maxLifetime: 60
     # ....还可以继续配置，配多少个就能用多少个
 ```
 
@@ -365,7 +384,9 @@ class DataSourceSwitchStack {
 * 升级mybatis-plus到3.x版本，支持spring boot2.3.x
 
 #### 版本2.1.0
-*  支持sql埋点监听功能，并且支持事务，如果当前sql执行存在事务中，则会在事务提交后才会回调sql监听者；
+* 修复分页插件不起作用BUG；
+* 弃用旧版本所有数据源共用一份连接池配置的策略，支持为每个数据源单独配置连接池；
+* 支持sql埋点监听功能，并且支持事务，如果当前sql执行存在事务中，则会在事务提交后才会回调sql监听者；
 
 第一步：启用sql埋点监听功能，并且启用事务调用链路追踪功能
 ```yaml
