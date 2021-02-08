@@ -119,7 +119,7 @@ class TransactionInvokeChain {
                     ptr.addListener(listener);
                     return;
                 }
-                ptr = last.pre;
+                ptr = prePtr == null ? null : prePtr.pre;
                 prePtr = ptr == null ? null : ptr.pre;
             }
             // 没有办法就加上吧
