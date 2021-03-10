@@ -1,3 +1,3 @@
-include 'easy-mybatis-plus-generator'
-include 'easymulti-datasource-spring-boot-starter'
+include 'easymulti-datasource-mybatis'
+include 'easymulti-datasource-r2dbc'
 
