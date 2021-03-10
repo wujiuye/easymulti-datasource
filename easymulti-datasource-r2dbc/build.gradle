@@ -1,0 +1,111 @@
+plugins {
+    id 'java'
+    // maven 发布插件
+    id 'maven-publish'
+    // 签名插件
+    id 'signing'
+}
+
+group 'com.github.wujiuye'
+version '3.0.1-RELEASE'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly('org.springframework.boot:spring-boot:2.3.0.RELEASE')
+    compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.3.0.RELEASE'
+    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.3.0.RELEASE'
+
+    // aop
+    compileOnly('org.aspectj:aspectjweaver:1.9.5')
+    // spring-data-r2dbc
+    compile('org.springframework.data:spring-data-r2dbc:1.1.0.RELEASE')
+    // r2dbc-pool
+    compile('io.r2dbc:r2dbc-pool:0.8.2.RELEASE')
+    // 测试用，mysql的r2dbc驱动
+    testCompile('dev.miku:r2dbc-mysql:0.8.2.RELEASE')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE')
+    testCompile('org.springframework.boot:spring-boot:2.3.0.RELEASE')
+    testCompile('org.springframework.boot:spring-boot-starter-aop:2.3.0.RELEASE')
+    testCompile('org.aspectj:aspectjweaver:1.9.5')
+}
+
+// 打包源码
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+// 生成 javadoc jar
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        // 推送
+        publishMyProject(MavenPublication) {
+            // 编译jar包
+            from components.java
+            // 打包源码
+            artifact sourcesJar
+            // javadoc
+            artifact javadocJar
+
+            pom {
+                name = "easymulti-datasource-r2dbc"
+                description = "easymulti-datasource-r2dbc是对spring-data-r2dbc的扩展，为反应式编程提供声明式和编程式多数据源动态切换的支持。"
+                url = "https://github.com/wujiuye/easymulti-datasource"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "wujiuye"
+                        name = "wujiuye"
+                        email = "419611821@qq.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/wujiuye/hotkits.git"
+                    developerConnection = "scm:git:https://github.com/wujiuye/hotkits.git"
+                    url = "https://github.com/wujiuye/hotkits"
+                }
+            }
+        }
+    }
+    // 到 https://oss.sonatype.org/#nexus-search; 搜索是否上传成功
+    repositories {
+        // 发布Release版本可在版本号后面带上'-RELEASE'，也可不带
+        maven {
+            name 'Release'
+            url 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                username = "${NEXUS_USERNAME}"
+                password = "${NEXUS_PASSWORD}"
+            }
+        }
+        // 发布Snapshot快照版本必须在版本号后面加上'-SNAPSHOT'
+        maven {
+            name = 'Snapshot'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots'
+            credentials {
+                username = "${NEXUS_USERNAME}"
+                password = "${NEXUS_PASSWORD}"
+            }
+        }
+    }
+}
+
+// 必须在 publishing 配置之后
+signing {
+    sign publishing.publications.publishMyProject
+}
+

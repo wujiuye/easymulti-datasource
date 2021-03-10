@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.github.wujiuye.r2dbc.EasyMutiR2dbcAutoConfiguration

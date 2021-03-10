@@ -1,0 +1,18 @@
+easymuti:
+  datasource:
+    r2dbc:
+      master-slave-mode:
+        master:
+          url: r2dbc:mysql://127.0.0.1:3306/r2dbc_stu
+          username: root
+          password:
+          pool:
+            max-size: 5
+            idel-timeout: 60
+        slave:
+          url: r2dbc:mysql://127.0.0.1:3306/r2dbc_stu
+          username: root
+          password:
+          pool:
+            max-size: 5
+            idel-timeout: 60
