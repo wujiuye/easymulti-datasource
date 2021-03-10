@@ -1,5 +1,5 @@
 # easymulti-datasource-r2dbc
-[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/hotkit-r2dbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/easymulti-datasource-r2dbc)
+[![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/easymulti-datasource-r2dbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.wujiuye/easymulti-datasource-r2dbc)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 `easymulti-datasource-r2dbc`为`spring-data-r2dbc`实现动态路由接口，为反应式编程提供声明式和编程式多数据源动态切换提供支持。并提供两种多数据源模式，覆盖常见的多数据源使用场景，分别是主从模式和`Cluster`模式，`Cluster`模式支持最多配置`3`个数据源，而主从模式支持一主一从。
