@@ -15,13 +15,14 @@ import java.util.Map;
  */
 public class EasyMutiR2dbcRoutingConnectionFactory extends AbstractRoutingConnectionFactory {
 
-    private final static String DB_KEY = "HOTKIT-R2DBC-DB";
+    private final static String DB_KEY = "R2DBC_DATASOURCE_KEY";
+    private final ConnectionFactory defaultTarget;
 
     public EasyMutiR2dbcRoutingConnectionFactory(BaseModeConnectionFactory modeConnectionFactory) {
         Map<String, ConnectionFactory> connectionFactoryMap = modeConnectionFactory.build();
         setTargetConnectionFactories(connectionFactoryMap);
-        ConnectionFactory defaultTarget = connectionFactoryMap.get(modeConnectionFactory.getDefaultDataBase());
-        setDefaultTargetConnectionFactory(defaultTarget);
+        this.defaultTarget = connectionFactoryMap.get(modeConnectionFactory.getDefaultDataBase());
+        setDefaultTargetConnectionFactory(this.defaultTarget);
     }
 
     public static <T> Mono<T> putDataSource(Mono<T> mono, String dataSource) {
@@ -37,6 +38,8 @@ public class EasyMutiR2dbcRoutingConnectionFactory extends AbstractRoutingConnec
         return Mono.subscriberContext().handle((context, sink) -> {
             if (context.hasKey(DB_KEY)) {
                 sink.next(context.get(DB_KEY));
+            } else {
+                sink.next(this.defaultTarget);
             }
         });
     }

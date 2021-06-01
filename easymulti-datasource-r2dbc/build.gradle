@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.github.wujiuye'
-version '3.0.1-RELEASE'
+version '3.0.2-RELEASE'
 
 repositories {
     mavenCentral()

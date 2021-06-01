@@ -35,3 +35,7 @@
 
 ## 版本3.0.1
 * 仅修改项目名称，由easymulti-datasource-spring-boot-starter更名为easymulti-datasource-mybatis
+
+## 版本3.0.3
+* fix bug: `No qualifying bean of type 'org.springframework.core.task.AsyncTaskExecutor' available: expected single matching bean but found 2: applicationTaskExecutor,taskScheduler`
+* 优化调用链日记打印

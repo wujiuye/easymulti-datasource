@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +31,7 @@ class TableFieldSubject implements TableFieldChangeWatcher, InitializingBean {
      * 延迟消费事件线程池
      */
     @Autowired(required = false)
+    @Qualifier("applicationTaskExecutor")
     private AsyncTaskExecutor executor;
 
     /**
