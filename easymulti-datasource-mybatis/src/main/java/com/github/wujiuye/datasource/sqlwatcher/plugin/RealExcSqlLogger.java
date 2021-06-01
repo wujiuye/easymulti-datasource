@@ -26,14 +26,8 @@ class RealExcSqlLogger {
     }
 
     public void showRealLog(String reqlSql) {
-        if (!showInvokeLink) {
-            logger.info("sql===> {}", reqlSql);
-        } else {
-            try {
-                throw new RuntimeException();
-            } catch (RuntimeException e) {
-                logger.error("sql===> {}, invoke link===>{}", reqlSql, e);
-            }
+        if (showInvokeLink) {
+            logger.info("{}", reqlSql.replace("\n", " "));
         }
     }
 
